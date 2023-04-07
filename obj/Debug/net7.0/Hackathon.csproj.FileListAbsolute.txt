@@ -1,0 +1,5 @@
+C:\Users\vasu.nagori\Documents\Projects\ChatGPT_Hackathon\obj\Debug\net7.0\Hackathon.csproj.AssemblyReference.cache
+C:\Users\vasu.nagori\Documents\Projects\ChatGPT_Hackathon\obj\Debug\net7.0\Hackathon.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vasu.nagori\Documents\Projects\ChatGPT_Hackathon\obj\Debug\net7.0\Hackathon.AssemblyInfoInputs.cache
+C:\Users\vasu.nagori\Documents\Projects\ChatGPT_Hackathon\obj\Debug\net7.0\Hackathon.AssemblyInfo.cs
+C:\Users\vasu.nagori\Documents\Projects\ChatGPT_Hackathon\obj\Debug\net7.0\Hackathon.csproj.CoreCompileInputs.cache
