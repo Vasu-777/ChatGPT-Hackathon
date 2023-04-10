@@ -24,7 +24,21 @@ namespace   FileController1
                     return data;
                 }
 
-                string inputFilePath = file;
+                // string inputFilePath = file;
+                // // assuming the data is stored in a List of Claims objects
+                // List<Claims> claimsList = GetClaimsData();
+
+                // // create a new workbook and worksheet
+                // var wb = new XLWorkbook();
+                // var ws = wb.Worksheets.Add("Claims");
+
+                // // group the claims by category and sum the approved claim amount for each category
+                // var categoryTotals = claimsList
+                //     .GroupBy(c => c.ClaimCategory)
+                //     .Select(g => new {
+                //         Category = g.Key,
+                //         TotalApprovedAmount = g.Sum(c => c.ApprovedAmount)
+                //     });
 
             // Open the input file for reading
             using (var workbook = new XLWorkbook(inputFilePath))
