@@ -28,7 +28,7 @@ namespace   HandlingFiles
                         {
                                 List<string> fileContents = fs.AggregateExcelData();
                                 Console.WriteLine(string.Join("\n",fileContents));
-                                Console.WriteLine("This is for testing");
+                                
                         }
                         else 
                         {
