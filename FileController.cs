@@ -268,7 +268,7 @@ namespace   FileController1
                         Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i));
                         float value = (float) d * 100;
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
-                        data.Add($" Total for category :{item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} , "); //Overall Total: {i}
+                        data.Add($" Total for category :{item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year}  "); //Overall Total: {i}
                     }
 
                     var quarterlyClaims2 = from row in monthlyClaims1

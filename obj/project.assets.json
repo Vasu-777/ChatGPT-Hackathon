@@ -8936,11 +8936,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Balaji.Ramamurthy\\OneDrive - Incedo Technology Solutions Ltd\\Personal\\Hackathon\\Integrated\\Hackathon.csproj",
+      "projectUniqueName": "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Chat Hackathon\\Hackathon.csproj",
       "projectName": "Hackathon",
-      "projectPath": "C:\\Users\\Balaji.Ramamurthy\\OneDrive - Incedo Technology Solutions Ltd\\Personal\\Hackathon\\Integrated\\Hackathon.csproj",
+      "projectPath": "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Chat Hackathon\\Hackathon.csproj",
       "packagesPath": "C:\\Users\\Balaji.Ramamurthy\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Balaji.Ramamurthy\\OneDrive - Incedo Technology Solutions Ltd\\Personal\\Hackathon\\Integrated\\obj\\",
+      "outputPath": "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Chat Hackathon\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Balaji.Ramamurthy\\AppData\\Roaming\\NuGet\\NuGet.Config"
