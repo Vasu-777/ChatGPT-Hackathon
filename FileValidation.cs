@@ -6,6 +6,7 @@ using ClosedXML.Excel;
 // using Microsoft.AspNetCore.Http;
 // using Microsoft.AspNetCore.Mvc;
 // using Microsoft.Extensions.DependencyInjection;
+using System.Globalization;
 
 namespace FileValidation{
 public class FileValidator : IFileValidator1
@@ -26,8 +27,37 @@ public class FileValidator : IFileValidator1
     
     public string file1 { get; set; }
     public string strMsg{get;set;}
+    public string FilePath1{get;set;}
     public string[][] strErrors = new string[2][]; int intErrors = 0;
-    public string IsValidExcelFile(string file, string FileName) //IFormFile
+
+    //Make code robust - Niraj
+    //Start
+    public bool WriteLog(string path, string error)
+    { 
+        bool IsCompleted=false;
+        try
+        {      
+            string logFile = path;
+            Console.WriteLine(path);
+            logFile += $"HackathonLogReport_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+            Console.WriteLine(logFile);
+            using (StreamWriter writer = new StreamWriter(logFile, append: true))
+            {
+                writer.WriteLine($"Log Time: {DateTime.Now}");
+                writer.WriteLine($"Message: {error}");
+                
+            }
+            IsCompleted=true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex.Message} {ex.InnerException} {ex}");
+        }
+        return IsCompleted;
+    }
+    //End
+
+    public string IsValidExcelFile(string file, string FileName, string FilePath) //IFormFile
     {
         // Add your validation logic here
         // For example, check the file extension and contents to ensure it's a valid Excel file
@@ -35,9 +65,10 @@ public class FileValidator : IFileValidator1
         
         // if (file1 != ".xlsx")
         file1 = FileName;
+        FilePath1 = FilePath;
         if (file != ".xlsx")
         {
-            
+            bool IsCompleted=WriteLog(FilePath1,"Not a xlsx file");
             return "Not a xlsx file"; // false;
         }
         else
@@ -53,17 +84,30 @@ public class FileValidator : IFileValidator1
             {
                 ValidFile=  numColumns==11 && !CheckColumnNames(FileName, expectedColumns)?"Invalid columns name in file":ValidFile;
                 strMsg = ValidFile;
+                if(strMsg!="success")
+                {
+                    bool IsCompleted=WriteLog(FilePath1,ValidFile);
+                }
                 //Console.WriteLine(strMsg);
             }
             else 
             {
                 strMsg = ValidFile;
                 //Console.WriteLine("Called");
+                if(strMsg!="success")
+                {
+                    bool IsCompleted=WriteLog(FilePath1,ValidFile);
+                }
+                else
+                {
+                    bool IsCompleted=WriteLog(FilePath1,ValidFile);
+                }
                 return strMsg;
             }
 
             if(strMsg == "success")
             {
+                
                 if(file == ".xlsx")
                 {
                     strMsg = ValidateDate(); //Code from Data type -  amount (Rishu), Data type checks - Date format (Manraj) 
@@ -82,57 +126,87 @@ public class FileValidator : IFileValidator1
         //Console.WriteLine(file1);
         using (var workbook = new XLWorkbook(file1))
         {
-            var worksheet = workbook.Worksheet(1);
-            var rowData = new List<string>();
-
-            // Get the range of cells containing data in the worksheet
-            var range = worksheet.RangeUsed();
-
-            int lastRow = worksheet.LastRowUsed().RowNumber();
-
-            string[] columnsToValidate = new string[] { "E", "G", "J" , "F", "I"};
-                
-            double result = 0;
-            foreach (string columnName in columnsToValidate)
-            {
-                // Get the range of cells for the current column
-                IXLRange columnCells = worksheet.Range(columnName + "2:" + columnName + lastRow);
-
-                
-                foreach (IXLCell cell in columnCells.Cells())
+            IXLWorksheet worksheet = workbook.Worksheet(1);
+                        var invalidDateCells = from row in worksheet.RowsUsed().Skip(1)
+                            let dateCells = new IXLCell[] {row.Cell("E"), row.Cell("G"),row.Cell("J")}
+                            let invalidCells = dateCells
+                            .Where(cell => !cell.IsEmpty())
+                            .Where(cell => !DateTime.TryParseExact(cell.GetString(), "dd-MM-yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                            where invalidCells.Any()
+                            select new {
+                                InvalidCells = invalidCells.Select(cell => cell.Address.ToString())
+                            };
+                foreach (var invalidDateCell in invalidDateCells)
                 {
-                    if(columnName.ToString() == "E" || columnName.ToString() == "G" || columnName.ToString() == "J")
-                    {
-                        // Check if the cell is not empty and its value is not in the correct format
-                        if (!DateTime.TryParseExact(cell.GetString(),"dd-MM-yyyy HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out _))
-                        {
-                            if(!cell.IsEmpty())
-                            {
-                                return $"Wrong date format in cell {cell.Address.ToString()}";
-                                //strErrors[intErrors] = new string[] {$"Wrong date format in cell {cell.Address.ToString()}"};
-                                //intErrors++;
-                            }
-                        }
-                    }
+                  //return $"Invalid date value in cell {string.Join(", ", invalidDateCell.InvalidCells)}";
+                  bool IsCompleted=WriteLog(FilePath1,$"Invalid date value in cell {string.Join(", ", invalidDateCell.InvalidCells)}");
+                  
+                }  
 
-                    if(columnName.ToString() == "F" || columnName.ToString() == "I")
-                    {
-                        var isDouble = double.TryParse(cell.GetString(),out result);
-
-                        if(!cell.IsEmpty())
-                        {
-                            if(!isDouble)
-                            {
-                                return $"Wrong Amount format in cell {cell.Address.ToString()}";
-                                //strErrors[intErrors] = new string[]{ $"Wrong Amount format in cell {cell.Address.ToString()}"};
-                                //intErrors++;
-                            }
-                        }
-                    }
+                var invalidAmountCells = from row in worksheet.RowsUsed().Skip(1)
+                 let amountCells = new IXLCell[] {row.Cell("F"), row.Cell("I")}
+                 let invalidCells = amountCells.Where(cell => !cell.IsEmpty())
+                                               .Where(cell => !double.TryParse(cell.GetString(), out _))
+                                                where invalidCells.Any()
+                            select new {
+                                InvalidCells = invalidCells.Select(cell => cell.Address.ToString())
+                            };
+                      foreach (var invalidAmountCell in invalidAmountCells)
+                {
+                    //return $"Invalid amount value in cell {string.Join(", ", invalidAmountCell.InvalidCells)}";
+                    bool IsCompleted=WriteLog(FilePath1,$"Invalid amount value in cell {string.Join(", ", invalidAmountCell.InvalidCells)}");
                 }
+            // var worksheet = workbook.Worksheet(1);
+            // var rowData = new List<string>();
+
+            // // Get the range of cells containing data in the worksheet
+            // var range = worksheet.RangeUsed();
+
+            // int lastRow = worksheet.LastRowUsed().RowNumber();
+
+            // string[] columnsToValidate = new string[] { "E", "G", "J" , "F", "I"};
+                
+            // double result = 0;
+            // foreach (string columnName in columnsToValidate)
+            // {
+            //     // Get the range of cells for the current column
+            //     IXLRange columnCells = worksheet.Range(columnName + "2:" + columnName + lastRow);
+
+                
+            //     foreach (IXLCell cell in columnCells.Cells())
+            //     {
+            //         if(columnName.ToString() == "E" || columnName.ToString() == "G" || columnName.ToString() == "J")
+            //         {
+            //             // Check if the cell is not empty and its value is not in the correct format
+            //             if (!DateTime.TryParseExact(cell.GetString(),"dd-MM-yyyy HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out _))
+            //             {
+            //                 if(!cell.IsEmpty())
+            //                 {
+            //                     return $"Wrong date format in cell {cell.Address.ToString()}";
+            //                     //strErrors[intErrors] = new string[] {$"Wrong date format in cell {cell.Address.ToString()}"};
+            //                     //intErrors++;
+            //                 }
+            //             }
+            //         }
+
+            //         if(columnName.ToString() == "F" || columnName.ToString() == "I")
+            //         {
+            //             var isDouble = double.TryParse(cell.GetString(),out result);
+
+            //             if(!cell.IsEmpty())
+            //             {
+            //                 if(!isDouble)
+            //                 {
+            //                     return $"Wrong Amount format in cell {cell.Address.ToString()}";
+            //                     //strErrors[intErrors] = new string[]{ $"Wrong Amount format in cell {cell.Address.ToString()}"};
+            //                     //intErrors++;
+            //                 }
+            //             }
+            //         }
+            //     }
                 
 
-            }
+            // }
         }
         // string s = ""; Console.Write(strErrors.GetUpperBound(0));
         //                         for(int i = 0; i < strErrors.GetUpperBound(0); i++)

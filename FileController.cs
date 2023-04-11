@@ -19,15 +19,16 @@ namespace   FileController1
         private readonly IFileValidator1 _excelValidator;
         private string _fileExtension {get; set;}
         private string _fileFullName{get;set;}
+        private string _filePath{get;set;}
         private readonly IFileValidator1 _IFileValidator1;
         public string IsFileValid {get; set;}
-        public ExcelController(IFileValidator1 FileValidator1, string fileExtension, string fileFullName)
+        public ExcelController(IFileValidator1 FileValidator1, string fileExtension, string fileFullName, string FilePath)
         {
             _IFileValidator1 = FileValidator1;
             _fileExtension = fileExtension; 
             _fileFullName = fileFullName;
-            
-            IsFileValid = _IFileValidator1.IsValidExcelFile(_fileExtension, _fileFullName);
+            _filePath = FilePath;
+            IsFileValid = _IFileValidator1.IsValidExcelFile(_fileExtension, _fileFullName, _filePath);
         }
 
         [HttpPost("read")] //Specify this method handles HTTP POST requests from clients
@@ -348,7 +349,7 @@ namespace   FileController1
                     data.Add($"Total pending approvals in the system: {totalPendingApprovals}");
                     
                     // Set the path and file name for your text file
-                    string filePath = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\";
+                    string filePath = _filePath; // "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\";
                     filePath += $"Log_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
                     // Open the file and write some text
                     using (StreamWriter writer = new StreamWriter(filePath)) 

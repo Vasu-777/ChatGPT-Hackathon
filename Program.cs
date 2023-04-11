@@ -14,7 +14,8 @@ namespace   HandlingFiles
                 
                         string UserFiles = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data.xlsx";
                         FileInfo Files = new FileInfo(UserFiles);
-                        
+                        string FilePath = Files.Directory.ToString();
+                        FilePath += "\\";
                         var services = new ServiceCollection();
                         services.AddSingleton<IFileValidator1, FileValidator>();
                         
@@ -22,7 +23,7 @@ namespace   HandlingFiles
 
                         var myService = serviceProvider.GetService<IFileValidator1>(); 
                         
-                        ExcelController fs = new ExcelController(myService, Files.Extension, Files.FullName);
+                        ExcelController fs = new ExcelController(myService, Files.Extension, Files.FullName, FilePath);
                         
                         if(fs.IsFileValid == "success")
                         {
