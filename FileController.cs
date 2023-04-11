@@ -41,6 +41,8 @@ namespace   FileController1
                 string inputFilePath = _fileFullName; // file;
 
                 // Open the input file for reading
+            //     using (var fileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            // {
                 using (var workbook = new XLWorkbook(inputFilePath))
                 {
                     // Get the first worksheet in the workbook
@@ -60,24 +62,25 @@ namespace   FileController1
                     //var totalPendingApprovals = 0; //Code from Total pending approvals in the system (Niraj)
                     var claimStatuses = worksheet.Column("H").CellsUsed();
 
-//Vasu code
-//Start
-//var data = range.Rows();
-//Category Wise Total Approved Claim Ammount
-var query2 = worksheet.Rows()
-           .Where(row => row.Cell("H").Value.ToString() == "Approved")
-           .GroupBy(row => row.Cell("B").GetString())
-           .Select(row => new {
-                        GroupName = row.Key,
-                        SumApproved = row.Sum(row => row.Cell("I").GetDouble())
-                    })
-                    .ToList();
-foreach (var item in query2)
-{
-    //Console.WriteLine($"{item.GroupName} : {item.SumApproved} ");
-    data.Add($"{item.GroupName} : {item.SumApproved} ");
-}
-//End                   
+                    //Vasu code
+                    //Start
+                    //var data = range.Rows();
+                    //Category Wise Total Approved Claim Ammount
+                    var query2 = worksheet.Rows()
+                            .Where(row => row.Cell("H").Value.ToString() == "Approved" && double.TryParse(row.Cell("I").Value.ToString(),out _))
+                            .GroupBy(row => row.Cell("B").GetString())
+                            .Select(row => new {
+                                            GroupName = row.Key,
+                                            SumApproved = row.Sum(row => row.Cell("I").GetDouble())
+                                        })
+                                        .ToList();
+                    foreach (var item in query2)
+                    {
+                        //Console.WriteLine($"{item.GroupName} : {item.SumApproved} ");
+                        data.Add($"{item.GroupName} : {item.SumApproved} ");
+                    }
+                    //End   
+
 
 //var data = range.Rows();
 // var query = worksheet.Rows()
@@ -172,6 +175,7 @@ foreach (var item in query2)
                                             Approvals = grp.Sum(r => r.Approvals)
                                         };
 
+
                     var yearlyClaims = from row in monthlyClaims
                                     group row by row.Year into grp
                                     orderby grp.Key
@@ -208,6 +212,94 @@ foreach (var item in query2)
                         data.Add($"{item.Year} Submissions: {item.Submissions}, Approvals: {item.Approvals} ");
                     }
 
+                    //Projected Category wise claims for the next quarter, based on the current trend.Balaji
+                    //Start
+                    var monthlyClaims1 = from row in claimsData.AsEnumerable()
+                                        group row by new {
+                                            Year = row.Field<DateTime>("SubmissionDate").Year,
+                                            Quarter = (row.Field<DateTime>("SubmissionDate").Month - 1) / 3 + 1,
+                                            Month = row.Field<DateTime>("SubmissionDate").Month,
+                                            MonthName = monthNames[row.Field<DateTime>("SubmissionDate").Month - 1],
+                                            Category = row.Field<String>("ClaimCategory").ToString()
+                                        } into grp
+                                        orderby grp.Key.Year, grp.Key.Month
+                                        select new {
+                                            Year = grp.Key.Year,
+                                            Quarter = grp.Key.Quarter,
+                                            Month = grp.Key.MonthName,
+                                            Category = grp.Key.Category,
+                                            
+                                            Submissions = grp.Count(),
+                                            Approvals = grp.Count(r => r.Field<string>("ClaimStatus") == "Approved"),
+                                            
+                                           PercentageApplied = grp.Count() 
+                                        };
+                    var quarterlyClaims1 = from row in monthlyClaims1
+                                        group row by new {
+                                            Year = row.Year,
+                                            Quarter = row.Quarter,
+                                            Category = row.Category,
+                                           // PercentageApplied = row.PercentageApplied
+                                        } into grp
+                                        orderby grp.Key.Year, grp.Key.Quarter
+                                        select new {
+                                            Year = grp.Key.Year,
+                                            Quarter = string.Format("Q{0}", grp.Key.Quarter),
+                                            Submissions = grp.Sum(r => r.Submissions),
+                                            Approvals = grp.Sum(r => r.Approvals),
+                                            Categories = grp.Key.Category,
+                                            PercentageApplied = grp.Sum(r => r.PercentageApplied) //grp.Key.PercentageApplied / grp.Sum(r => r.Submissions) // grp.Sum(r => r.PercentageApplied)
+                                        };
+                    data.Add("\nProjected categories:");
+                    data.Add("\nCategory wise % claimed:");
+                    // foreach (var item in monthlyClaims1)
+                    // {
+                    //     // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
+                    //     //     item.Month, item.Year, item.Submissions, item.Approvals);
+                    //     data.Add($" {item.Category} {item.Month} {item.Year} Submissions: {item.Submissions}, Approvals: {item.Approvals}");
+                    // }
+                    
+                    int i = claimsData.Rows.Count; // quarterlyClaims1.Count();
+                    data.Add($"\nTotal number of claims found is : {i}"); 
+                    foreach (var item in quarterlyClaims1)
+                    {
+                        // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
+                        //     item.Quarter, item.Year, item.Submissions, item.Approvals);
+                        Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i));
+                        float value = (float) d * 100;
+                        //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
+                        data.Add($" Total for category :{item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} , "); //Overall Total: {i}
+                    }
+
+                    var quarterlyClaims2 = from row in monthlyClaims1
+                                        group row by new {
+                                            Year = row.Year,
+                                            Quarter = row.Quarter,
+                                            Category = row.Category,
+                                           // PercentageApplied = row.PercentageApplied
+                                        } into grp
+                                        orderby grp.Key.Year, grp.Key.Quarter
+                                        select new {
+                                            Year = grp.Key.Quarter+1 > 4? grp.Key.Year+1: grp.Key.Year,
+                                            Quarter = string.Format("Q{0}", grp.Key.Quarter+1 > 4? 1: grp.Key.Quarter+1),
+                                            Submissions = grp.Sum(r => r.Submissions),
+                                            Approvals = grp.Sum(r => r.Approvals),
+                                            Categories = grp.Key.Category,
+                                            PercentageApplied = grp.Sum(r => r.PercentageApplied) //grp.Key.PercentageApplied / grp.Sum(r => r.Submissions) // grp.Sum(r => r.PercentageApplied)
+                                        };
+                    data.Add("\nProjected claims:");
+                    data.Add($"\nTotal number of claims found is : {i}"); //Projected Total: {i1}
+                    int i1 = claimsData.Rows.Count; // quarterlyClaims2.Count();
+                    foreach (var item in quarterlyClaims2)
+                    {
+                        // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
+                        //     item.Quarter, item.Year, item.Submissions, item.Approvals);
+                        Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i1));
+                        float value = (float) d * 100;
+                        //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
+                        data.Add($" Projected :{item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} ");
+                    }
+                    //End
                 }
 
 
@@ -244,6 +336,8 @@ foreach (var item in query2)
                 //     //}
                     //End
 
+                    
+
                     data.Add("\n");
                     data.Add("Total Claimed Status "+lastRow);
                     
@@ -253,13 +347,34 @@ foreach (var item in query2)
                     data.Add($"Total Approved Status: {approvedCount}");
                     data.Add($"Total pending approvals in the system: {totalPendingApprovals}");
                     
+                    // Set the path and file name for your text file
+                    string filePath = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\";
+                    filePath += $"Log_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                    // Open the file and write some text
+                    using (StreamWriter writer = new StreamWriter(filePath)) 
+                    {
+                        // writer.WriteLine("This is some sample text.");
+                        // writer.WriteLine("You can write multiple lines.");
+                        // writer.WriteLine("And even use variables or other data types.");
+                        writer.WriteLine($"Hackathon Back End Net Core Log Report Created On {DateTime.Now:dd-MM-yyyy HH:mm:ss} ");
+                        //writer.WriteLine("\n");
+                        writer.WriteLine("==================================================");
+                        writer.WriteLine("\n");
+                        foreach(var items in data)
+                        {
+                            
+                            writer.WriteLine(items);
+                        }
+                        
+                    }        
+
                     //End
-                }
+                }   
                 return data;
             }
             catch (Exception ex)
             {
-            data.Add(ex.Message);
+            data.Add("Some problem encountered : " + ex.Message);
                 return data;
             }
         }
