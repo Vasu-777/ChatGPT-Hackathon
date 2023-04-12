@@ -111,6 +111,7 @@ public class FileValidator : IFileValidator1
                 if(file == ".xlsx")
                 {
                     strMsg = ValidateDate(); //Code from Data type -  amount (Rishu), Data type checks - Date format (Manraj) 
+                    strMsg = FindDuplicateRowsFromExcel();
                 }
             }
             
@@ -285,5 +286,59 @@ public class FileValidator : IFileValidator1
         return true;
     }    
     //End
+
+    //Niraj/Balaji code on duplicity
+    //Stat
+    // Returns a list of distinct rows based on selected column values from an Excel file
+    public string FindDuplicateRowsFromExcel()
+    {
+        try
+        {
+            using (var workbook = new XLWorkbook(file1))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    var rows = worksheet.RowsUsed();
+
+                    // Use LINQ to group rows by their values
+                    var groups = rows.GroupBy(r => String.Join(r.Cell(1).Value.ToString(),  r.Cell(2).Value.ToString(),r.Cell(3).Value.ToString(), r.Cell(4).Value.ToString(), r.Cell(5).Value.ToString(), r.Cell(6).Value.ToString(), r.Cell(7).Value.ToString(), r.Cell(8).Value.ToString(), r.Cell(9).Value.ToString(), r.Cell(10).Value.ToString(), r.Cell(11).Value.ToString()));
+                // var groups = rows.GroupBy(new r{ r.Cell(1).Value, r.Cell(2).Value}) ;//, r.Cell(3).Value, r.Cell(4).Value, r.Cell(5).Value, r.Cell(6).Value, r.Cell(7).Value, r.Cell(8).Value, r.Cell(9).Value, r.Cell(10).Value, r.Cell(11).Value});
+
+                    // Check if any group has more than one row
+                    var duplicates = groups.Where(g => g.Count() > 1);
+
+                    if (duplicates.Any())
+                    {
+                        //Console.WriteLine("Duplicate data found:");
+                        bool IsCompleted=WriteLog(FilePath1,$"Duplicate data found");
+                        foreach (var group in duplicates)
+                        {
+                            //Console.WriteLine(group.Key);
+                            foreach (var row in group)
+                            {
+                                //Console.WriteLine("  Cell: {0}", row.Cell(1).Address);
+                                IsCompleted=WriteLog(FilePath1,$" Cell : {row.Cell(1).Address}");
+                            }
+                            //return false;
+                        }
+                    }
+                    // else
+                    // {
+                    //     Console.WriteLine("No duplicate data found.");
+                    // }
+                }
+
+        return "success";
+        // }
+        }
+        catch (Exception ex)
+        {
+                // Log or handle the exception appropriately
+            //Console.WriteLine("Failed to get distinct rows from Excel file: " + ex.Message);
+        
+        return $"Failed to get distinct rows from Excel File {ex.Message}";
+        }
+    }
+            //End
+
 }
 }

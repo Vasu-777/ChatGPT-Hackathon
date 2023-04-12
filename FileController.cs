@@ -35,7 +35,7 @@ namespace   FileController1
         public List<string> AggregateExcelData() 
         {
             var data = new List<string>();
- 
+
             try
             {
 
@@ -46,6 +46,8 @@ namespace   FileController1
             // {
                 using (var workbook = new XLWorkbook(inputFilePath))
                 {
+                    //data.Add($"Duplicity check : {GetDistinctRowsFromExcel(inputFilePath)}");
+                    
                     // Get the first worksheet in the workbook
                     var worksheet = workbook.Worksheet(1);
                     var rowData = new List<string>();
@@ -260,12 +262,13 @@ namespace   FileController1
                     //     data.Add($" {item.Category} {item.Month} {item.Year} Submissions: {item.Submissions}, Approvals: {item.Approvals}");
                     // }
                     
-                    int i = claimsData.Rows.Count; // quarterlyClaims1.Count();
+                    int i =  claimsData.Rows.Count; // quarterlyClaims1.Count();
                     data.Add($"\nTotal number of claims found is : {i}"); 
                     foreach (var item in quarterlyClaims1)
                     {
                         // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
                         //     item.Quarter, item.Year, item.Submissions, item.Approvals);
+                        // Console.WriteLine($"{item.Categories}");
                         Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i));
                         float value = (float) d * 100;
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
@@ -379,5 +382,7 @@ namespace   FileController1
                 return data;
             }
         }
+
+
     }
 }

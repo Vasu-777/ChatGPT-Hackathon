@@ -13,6 +13,9 @@ namespace   HandlingFiles
                 {
                 
                         string UserFiles = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data.xlsx";
+                        //string UserFiles = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data - Wrong Number Of Columns.xlsx";
+                        //string UserFiles = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data - Wrong Column Name.xlsx";
+                        //string UserFiles = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon_Test_File_Date_And_Amount.xlsx";
                         FileInfo Files = new FileInfo(UserFiles);
                         string FilePath = Files.Directory.ToString();
                         FilePath += "\\";
