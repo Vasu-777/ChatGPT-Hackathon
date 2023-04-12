@@ -77,11 +77,14 @@ namespace   FileController1
                                             SumApproved = row.Sum(row => row.Cell("I").GetDouble())
                                         })
                                         .ToList();
+                    data.Add("*************************************************");
+                    data.Add($"Category wise total approved claim amount");
                     foreach (var item in query2)
                     {
                         //Console.WriteLine($"{item.GroupName} : {item.SumApproved} ");
                         data.Add($"{item.GroupName} : {item.SumApproved} ");
                     }
+                    data.Add("*************************************************");
                     //End   
 
 
@@ -189,6 +192,8 @@ namespace   FileController1
                                     };
 
                     //Console.WriteLine("Monthly Claims:");
+                    data.Add("*************************************************");
+                    data.Add($"Monthly/Quarterly/Yearly claims submission vs approvals.");
                     data.Add("Monthly Claims:");
                     foreach (var item in monthlyClaims)
                     {
@@ -214,7 +219,9 @@ namespace   FileController1
                         //     item.Year, item.Submissions, item.Approvals);
                         data.Add($"{item.Year} Submissions: {item.Submissions}, Approvals: {item.Approvals} ");
                     }
-
+                    data.Add("*************************************************");
+                    data.Add("*************************************************");
+                    data.Add($"Projected Category wise claims for the next quarter, based on the current trend.");
                     //Projected Category wise claims for the next quarter, based on the current trend.Balaji
                     //Start
                     var monthlyClaims1 = from row in claimsData.AsEnumerable()
@@ -253,6 +260,8 @@ namespace   FileController1
                                             Categories = grp.Key.Category,
                                             PercentageApplied = grp.Sum(r => r.PercentageApplied) //grp.Key.PercentageApplied / grp.Sum(r => r.Submissions) // grp.Sum(r => r.PercentageApplied)
                                         };
+                    // data.Add("*************************************************");
+
                     data.Add("\nProjected categories:");
                     data.Add("\nCategory wise % claimed:");
                     // foreach (var item in monthlyClaims1)
@@ -262,15 +271,16 @@ namespace   FileController1
                     //     data.Add($" {item.Category} {item.Month} {item.Year} Submissions: {item.Submissions}, Approvals: {item.Approvals}");
                     // }
                     
-                    int i =  claimsData.Rows.Count; // quarterlyClaims1.Count();
+                    int i = claimsData.Rows.Count; // claimsData.Rows.Count; // quarterlyClaims1.Count();
                     data.Add($"\nTotal number of claims found is : {i}"); 
+                    //Console.WriteLine($"{quarterlyClaims1.Count()}");
                     foreach (var item in quarterlyClaims1)
                     {
                         // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
                         //     item.Quarter, item.Year, item.Submissions, item.Approvals);
                         // Console.WriteLine($"Category wise count : {item.Categories.Count()}");
-                        i = item.Categories.Count();
-                        data.Add( $"Actual Quarter wise count : {i}");
+                        //i = item.Categories.Count();
+                        //data.Add( $"Actual Quarter wise count : {i}");
                         Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i));
                         float value = (float) d * 100;
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
@@ -294,20 +304,21 @@ namespace   FileController1
                                             PercentageApplied = grp.Sum(r => r.PercentageApplied) //grp.Key.PercentageApplied / grp.Sum(r => r.Submissions) // grp.Sum(r => r.PercentageApplied)
                                         };
                     data.Add("\nProjected claims:");
-                    //data.Add($"\nTotal number of claims found is : {i}"); //Projected Total: {i1}
-                    int i1 = claimsData.Rows.Count; // quarterlyClaims2.Count();
+                    data.Add($"\nTotal number of claims found is : {i}"); //Projected Total: {i1}
+                    int i1 =  claimsData.Rows.Count; // quarterlyClaims2.Count();
                     data.Add($"\nProjected number of claims : {i1}"); 
                     foreach (var item in quarterlyClaims2)
                     {
                         // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
                         //     item.Quarter, item.Year, item.Submissions, item.Approvals);
-                        i1 = item.Categories.Count();
-                        data.Add( $"Projected Quarter wise count : {i1}");
+                        //i1 = item.Categories.Count();
+                        //data.Add( $"Projected Quarter wise count : {i1}");
                         Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i1));
                         float value = (float) d * 100;
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
-                        data.Add($" Projected Submission : {item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} ");
+                        data.Add($" Projected : {item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} ");
                     }
+                    data.Add("*************************************************");
                     //End
                 }
 
@@ -347,14 +358,20 @@ namespace   FileController1
 
                     
 
-                    data.Add("\n");
+                   // data.Add("\n");
+                    data.Add("*************************************************");
+                    data.Add($"Total pending approvals in the system");
                     data.Add("Total Claimed Status "+lastRow);
                     
                     //data.Add("Total Approved Status "+approvedCount);
                     
                     //data.Add("Total pending approvals in the system "+totalPendingApprovals);
+                    
+                    data.Add($"Total pending approvals in the system");
+                    
                     data.Add($"Total Approved Status: {approvedCount}");
                     data.Add($"Total pending approvals in the system: {totalPendingApprovals}");
+                    data.Add("*************************************************");
                     
                     // Set the path and file name for your text file
                     string filePath = _filePath; // "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\";
@@ -367,14 +384,17 @@ namespace   FileController1
                         // writer.WriteLine("And even use variables or other data types.");
                         writer.WriteLine($"Hackathon Back End Net Core Log Report Created On {DateTime.Now:dd-MM-yyyy HH:mm:ss} ");
                         //writer.WriteLine("\n");
-                        writer.WriteLine("==================================================");
+                        writer.WriteLine("*************************************************");
                         writer.WriteLine("\n");
+                        writer.WriteLine($"Validations have been performed. ");
+                        writer.WriteLine($"Bad records are logged and the file 'HackathonLogReport_xxx are logged in the path {_filePath.ToString()}");
+                        writer.WriteLine($"Please refer to the latest file in terms of date and time stamp");
                         foreach(var items in data)
                         {
                             
                             writer.WriteLine(items);
                         }
-                        
+                        // writer.WriteLine("*************************************************");
                     }        
 
                     //End

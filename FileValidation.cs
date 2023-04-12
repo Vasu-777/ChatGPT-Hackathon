@@ -38,9 +38,9 @@ public class FileValidator : IFileValidator1
         try
         {      
             string logFile = path;
-            Console.WriteLine(path);
+            //Console.WriteLine(path);
             logFile += $"HackathonLogReport_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
-            Console.WriteLine(logFile);
+            //Console.WriteLine(logFile);
             using (StreamWriter writer = new StreamWriter(logFile, append: true))
             {
                 writer.WriteLine($"Log Time: {DateTime.Now}");
