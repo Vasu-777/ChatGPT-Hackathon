@@ -268,11 +268,13 @@ namespace   FileController1
                     {
                         // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
                         //     item.Quarter, item.Year, item.Submissions, item.Approvals);
-                        // Console.WriteLine($"{item.Categories}");
+                        // Console.WriteLine($"Category wise count : {item.Categories.Count()}");
+                        i = item.Categories.Count();
+                        data.Add( $"Actual Quarter wise count : {i}");
                         Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i));
                         float value = (float) d * 100;
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
-                        data.Add($" Total for category :{item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year}  "); //Overall Total: {i}
+                        data.Add($" Submitted : {item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year}  "); //Overall Total: {i}
                     }
 
                     var quarterlyClaims2 = from row in monthlyClaims1
@@ -292,16 +294,19 @@ namespace   FileController1
                                             PercentageApplied = grp.Sum(r => r.PercentageApplied) //grp.Key.PercentageApplied / grp.Sum(r => r.Submissions) // grp.Sum(r => r.PercentageApplied)
                                         };
                     data.Add("\nProjected claims:");
-                    data.Add($"\nTotal number of claims found is : {i}"); //Projected Total: {i1}
+                    //data.Add($"\nTotal number of claims found is : {i}"); //Projected Total: {i1}
                     int i1 = claimsData.Rows.Count; // quarterlyClaims2.Count();
+                    data.Add($"\nProjected number of claims : {i1}"); 
                     foreach (var item in quarterlyClaims2)
                     {
                         // Console.WriteLine("{0} {1} Submissions: {2}, Approvals: {3}", 
                         //     item.Quarter, item.Year, item.Submissions, item.Approvals);
+                        i1 = item.Categories.Count();
+                        data.Add( $"Projected Quarter wise count : {i1}");
                         Decimal d = Math.Abs(Convert.ToDecimal( item.PercentageApplied) / Convert.ToDecimal(i1));
                         float value = (float) d * 100;
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
-                        data.Add($" Projected :{item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} ");
+                        data.Add($" Projected Submission : {item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} ");
                     }
                     //End
                 }
