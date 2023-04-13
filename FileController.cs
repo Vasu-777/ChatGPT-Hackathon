@@ -15,7 +15,7 @@ namespace   FileController1
     [Route("[controller]")]
     public class ExcelController : ControllerBase
     {
-
+private string _hackathonLogFile {get;set;}
         private readonly IFileValidator1 _excelValidator;
         private string _fileExtension {get; set;}
         private string _fileFullName{get;set;}
@@ -29,6 +29,8 @@ namespace   FileController1
             _fileFullName = fileFullName;
             _filePath = FilePath;
             IsFileValid = _IFileValidator1.IsValidExcelFile(_fileExtension, _fileFullName, _filePath);
+            // Console.WriteLine(_IFileValidator1.hackathonLogFile);
+            _hackathonLogFile = string.IsNullOrWhiteSpace(_IFileValidator1.hackathonLogFile) == true ? "": _IFileValidator1.hackathonLogFile;
         }
 
         [HttpPost("read")] //Specify this method handles HTTP POST requests from clients
@@ -84,7 +86,7 @@ namespace   FileController1
                         //Console.WriteLine($"{item.GroupName} : {item.SumApproved} ");
                         data.Add($"{item.GroupName} : {item.SumApproved} ");
                     }
-                    data.Add("*************************************************");
+                    data.Add("*************************************************\n");
                     //End   
 
 
@@ -219,7 +221,7 @@ namespace   FileController1
                         //     item.Year, item.Submissions, item.Approvals);
                         data.Add($"{item.Year} Submissions: {item.Submissions}, Approvals: {item.Approvals} ");
                     }
-                    data.Add("*************************************************");
+                     data.Add("*************************************************\n");
                     data.Add("*************************************************");
                     data.Add($"Projected Category wise claims for the next quarter, based on the current trend.");
                     //Projected Category wise claims for the next quarter, based on the current trend.Balaji
@@ -318,7 +320,7 @@ namespace   FileController1
                         //data.Add($" ({d}) {item.Categories} {item.Quarter} , {item.Year} , Submissions: {item.Submissions}, Approvals: {item.Approvals}");
                         data.Add($" Projected : {item.PercentageApplied}  %Applied : ({value}) {item.Categories} {item.Quarter} , {item.Year} ");
                     }
-                    data.Add("*************************************************");
+                    data.Add("*************************************************\n");
                     //End
                 }
 
@@ -367,7 +369,7 @@ namespace   FileController1
                     
                     //data.Add("Total pending approvals in the system "+totalPendingApprovals);
                     
-                    data.Add($"Total pending approvals in the system");
+                    // data.Add($"Total pending approvals in the system");
                     
                     data.Add($"Total Approved Status: {approvedCount}");
                     data.Add($"Total pending approvals in the system: {totalPendingApprovals}");
@@ -383,12 +385,17 @@ namespace   FileController1
                         // writer.WriteLine("You can write multiple lines.");
                         // writer.WriteLine("And even use variables or other data types.");
                         writer.WriteLine($"Hackathon Back End Net Core Log Report Created On {DateTime.Now:dd-MM-yyyy HH:mm:ss} ");
-                        //writer.WriteLine("\n");
+                        writer.WriteLine("\n");
                         writer.WriteLine("*************************************************");
                         writer.WriteLine("\n");
                         writer.WriteLine($"Validations have been performed. ");
-                        writer.WriteLine($"Bad records are logged and the file 'HackathonLogReport_xxx are logged in the path {_filePath.ToString()}");
-                        writer.WriteLine($"Please refer to the latest file in terms of date and time stamp");
+                        if(string.IsNullOrWhiteSpace(_hackathonLogFile) == false)
+                        {//
+                           writer.WriteLine($"Bad records are logged and the file {_hackathonLogFile} are logged in the path {_filePath.ToString()}");
+                           writer.WriteLine($"Please refer to the latest file in terms of date and time stamp\n");
+                        }
+                        
+                         writer.WriteLine("*************************************************\n");
                         foreach(var items in data)
                         {
                             

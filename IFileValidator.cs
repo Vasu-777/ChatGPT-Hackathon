@@ -10,7 +10,7 @@ using System.IO;
 
 public interface IFileValidator1
 {
-
+string hackathonLogFile{get;set;}
     string IsValidExcelFile(string file, string FileName, string FilePath); //File extension check (Balaji). IFormFile
 
     int GetNumberOfColumns(string inputFilePath, char delimiter); //Code from File Format check - Column Names (Niraj) and File format check - No. of column (Niraj)

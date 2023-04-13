@@ -28,6 +28,7 @@ public class FileValidator : IFileValidator1
     public string file1 { get; set; }
     public string strMsg{get;set;}
     public string FilePath1{get;set;}
+    public string  hackathonLogFile{get;set;}
     public string[][] strErrors = new string[2][]; int intErrors = 0;
 
     //Make code robust - Niraj
@@ -40,6 +41,7 @@ public class FileValidator : IFileValidator1
             string logFile = path;
             //Console.WriteLine(path);
             logFile += $"HackathonLogReport_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+            hackathonLogFile = logFile;
             //Console.WriteLine(logFile);
             using (StreamWriter writer = new StreamWriter(logFile, append: true))
             {
@@ -57,6 +59,8 @@ public class FileValidator : IFileValidator1
     }
     //End
 
+    //File validation code - Balaji
+    //Start
     public string IsValidExcelFile(string file, string FileName, string FilePath) //IFormFile
     {
         // Add your validation logic here
@@ -119,6 +123,7 @@ public class FileValidator : IFileValidator1
         
         return strMsg.Length > 0 ? strMsg : "success";
     }
+    //End
 
     // Code from Data type -  amount (Rishu), Data type checks - Date format (Manraj) 
     //Start
