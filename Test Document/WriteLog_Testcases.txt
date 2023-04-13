@@ -1,0 +1,56 @@
+Set up the testing environment:
+
+Declare and initialize a variable for the log file path.
+Create an instance of the class that contains the method to be tested.
+Create or provide sample errors.
+Test the WriteLog() method:
+
+Invoke the WriteLog() method with a valid log file path and an error message as arguments.
+Assert that the method returns true.
+Assert that the log file was created and contains the correct error message.
+Test the exception handling of the WriteLog() method:
+
+Provide an invalid file path.
+Invoke the WriteLog() method with the invalid file path and an error message as arguments.
+Assert that the method returns false.
+
+[TestClass]
+public class LoggerTests
+{
+    // Step 1: Set up the testing environment
+    private string logsPath = "logs/";
+
+    private Logger logger;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        logger = new Logger();
+    }
+
+    [TestMethod]
+    public void WriteLog_CreatesLogFileAndReturnsTrue()
+    {
+        // Step 2: Provide a valid log file path and invoke the method
+        var result = logger.WriteLog(logsPath + "test_log.txt", "Test error");
+
+        // Assert that the method returned true
+        Assert.IsTrue(result);
+
+        // Assert that the log file was created and contains the correct message
+        string[] lines = File.ReadAllLines(logsPath + "test_log.txt");
+        StringAssert.Contains(lines[0], "Log Time:");
+        StringAssert.Contains(lines[1], "Message:");
+        StringAssert.Contains(lines[1], "Test error");
+    }
+
+    [TestMethod]
+    public void WriteLog_ReturnsFalseForInvalidPath()
+    {
+        // Step 3: Provide an invalid log file path and invoke the method
+        var result = logger.WriteLog("", "Test error");
+
+        // Assert that the method returned false
+        Assert.IsFalse(result);
+    }
+}

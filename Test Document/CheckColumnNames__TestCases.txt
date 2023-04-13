@@ -1,0 +1,84 @@
+Set up the testing environment:
+
+Declare and initialize variables for the filePath, expectedColumns.
+Create an instance of the class that contains the method to be tested.
+Test the CheckColumnNames() method:
+
+Provide an input Excel file containing columns matching the expected column names.
+Invoke the CheckColumnNames() method with the input file path and a string array of the expected column names.
+Assert that the returned value is true.
+Test the CheckColumnNames() method with an input file that has a different number of columns than expected:
+
+Provide an input Excel file containing a different number of columns than expected.
+Invoke the CheckColumnNames() method with the input file path and a string array of the expected column names.
+Assert that the returned value is false.
+Test the CheckColumnNames() method with an input file that has different column names than expected:
+
+Provide an input Excel file containing column names that do not match the expected column names.
+Invoke the CheckColumnNames() method with the input file path and a string array of the expected column names.
+Assert that the returned value is false.
+Test the exception handling of the CheckColumnNames() method:
+
+Provide an invalid input file path.
+Invoke the CheckColumnNames() method with the input file path and a string array of the expected column names.
+Assert that the returned value is false.
+Assert that an error message was written to the console.
+
+[TestClass]
+public class ExcelProcessorTests
+{
+    // Step 1: Set up the testing environment
+    private string filePath = "input.xlsx";
+    private string[] expectedColumns = new string[] { "Name", "Email", "Phone" };
+    private ExcelProcessor excelProcessor;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        excelProcessor = new ExcelProcessor();
+    }
+
+    [TestMethod]
+    public void CheckColumnNames_ReturnsTrueForMatchingFile()
+    {
+        // Step 2: Provide an input file with matching columns
+        // and invoke the method
+        var result = excelProcessor.CheckColumnNames(filePath, expectedColumns);
+
+        // Assert that the method returned true
+        Assert.IsTrue(result);
+    }
+
+    [TestMethod]
+    public void CheckColumnNames_ReturnsFalseForWrongNumberOfColumns()
+    {
+        // Step 3: Provide an input file with a different number of columns
+        // than expected and invoke the method
+        var result = excelProcessor.CheckColumnNames("input_wrongcolumns.xlsx", expectedColumns);
+
+        // Assert that the method returned false
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void CheckColumnNames_ReturnsFalseForWrongColumnNames()
+    {
+        // Step 4: Provide an input file with different column names
+        // than expected and invoke the method
+        var result = excelProcessor.CheckColumnNames("input_wrongnames.xlsx", expectedColumns);
+
+        // Assert that the method returned false
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void CheckColumnNames_ReturnsFalseForInvalidFile()
+    {
+        // Step 5: Provide an invalid input file path and invoke the method
+        var result = excelProcessor.CheckColumnNames("nonexistent.xlsx", expectedColumns);
+
+        // Assert that the method returned false and an error message was written to the console
+        Assert.IsFalse(result);
+        StringAssert.Contains(Console.Out.ToString(), "Error checking column names for file nonexistent.xlsx:");
+    }
+}

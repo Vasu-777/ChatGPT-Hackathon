@@ -1,0 +1,85 @@
+Set up the testing environment:
+
+Declare and initialize variables for the file path and file name.
+Create an instance of the class that contains the method to be tested.
+Create or get sample CSV files containing valid and invalid date and amount values.
+Test the ValidateDate() method:
+
+Invoke the ValidateDate() method with the input file path as argument.
+Assert that the method returns "success" if all dates and amounts are valid.
+Assert that the method writes log messages to file if there are any invalid dates or amounts.
+Test the exception handling of the ValidateDate() method:
+
+Provide an invalid file path.
+Invoke the ValidateDate() method with the input file path as argument.
+Assert that an error message was written to the console.
+
+[TestClass]
+public class ExcelProcessorTests
+{
+    // Step 1: Set up the testing environment
+    private string validFilePath = "valid.csv";
+    private string invalidDatesFilePath = "invalid_dates.csv";
+    private string invalidAmountsFilePath = "invalid_amounts.csv";
+    private string invalidFilePath = "nonexistent.csv";
+    private ExcelProcessor excelProcessor;
+    private string logsPath = "logs.txt";
+
+    [TestInitialize]
+    public void Setup()
+    {
+        excelProcessor = new ExcelProcessor();
+    }
+
+    [TestMethod]
+    public void ValidateDate_ReturnsSuccessForValidFile()
+    {
+        // Step 2: Provide a valid input file and invoke the method
+        var result = excelProcessor.ValidateDate(validFilePath);
+
+        // Assert that the method returned "success"
+        Assert.AreEqual("success", result);
+    }
+
+    [TestMethod]
+    public void ValidateDate_WritesLogForInvalidDates()
+    {
+        // Step 2: Provide a file with invalid dates and invoke the method
+        var result = excelProcessor.ValidateDate(invalidDatesFilePath);
+
+        // Assert that the method wrote log messages to file
+        string[] logs = File.ReadAllLines(logsPath);
+        Assert.IsTrue(logs.Length > 0);
+        Assert.IsTrue(logs[logs.Length - 1].Contains("Invalid date value"));
+    }
+
+    [TestMethod]
+    public void ValidateDate_WritesLogForInvalidAmounts()
+    {
+        // Step 2: Provide a file with invalid amounts and invoke the method
+        var result = excelProcessor.ValidateDate(invalidAmountsFilePath);
+
+        // Assert that the method wrote log messages to file
+        string[] logs = File.ReadAllLines(logsPath);
+        Assert.IsTrue(logs.Length > 0);
+        Assert.IsTrue(logs[logs.Length - 1].Contains("Invalid amount value"));
+    }
+
+    [TestMethod]
+    public void ValidateDate_ThrowsExceptionForInvalidFile()
+    {
+        // Step 3: Provide an invalid file path and invoke the method
+        try
+        {
+            var result = excelProcessor.ValidateDate(invalidFilePath);
+        }
+        catch (Exception ex)
+        {
+            // Assert that an error message was thrown
+            StringAssert.Contains(ex.Message, "Error opening file nonexistent.csv:");
+            return;
+        }
+
+        Assert.Fail("Expected exception was not thrown.");
+    }
+}

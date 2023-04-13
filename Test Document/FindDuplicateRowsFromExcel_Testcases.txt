@@ -1,0 +1,68 @@
+
+To test this code, you could follow these steps:
+
+Set up the testing environment:
+
+Declare and initialize variables for the file1, FilePath1.
+Create an instance of the class that contains the method to be tested.
+Test the FindDuplicateRowsFromExcel() method:
+
+Provide an input Excel file containing some duplicate rows.
+Invoke the FindDuplicateRowsFromExcel() method with the input file as a parameter.
+Assert that the returned value is "success".
+Assert that the log file was correctly written with messages indicating the duplicate rows found.
+Test the exception handling of the FindDuplicateRowsFromExcel() method:
+
+Provide an input Excel file that causes an exception when processed.
+Invoke the FindDuplicateRowsFromExcel() method with the input file as a parameter.
+Assert that the returned value includes the error message from the thrown exception.
+
+
+[TestClass]
+public class ExcelProcessorTests
+{
+    // Step 1: Set up the testing environment
+    private string file1 = "input.xlsx";
+    private string FilePath1 = "log.txt";
+    private ExcelProcessor excelProcessor;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        excelProcessor = new ExcelProcessor();
+    }
+
+    [TestMethod]
+    public void FindDuplicateRowsFromExcel_ShouldReturnSuccessAndLogCorrectly()
+    {
+        // Step 2a: Provide an input file with duplicate rows
+        // and invoke the method
+        var result = excelProcessor.FindDuplicateRowsFromExcel(file1);
+
+        // Step 2b: Assert that no exceptions occurred and the
+        // method returned "success"
+        Assert.AreEqual("success", result);
+
+        // Step 2c: Assert that the log file was correctly written
+        var logText = File.ReadAllText(FilePath1);
+        Assert.IsTrue(logText.Contains("Duplicate data found:"));
+        Assert.IsTrue(logText.Contains("Cell : A2"));
+        Assert.IsTrue(logText.Contains("Cell : A3"));
+    }
+
+    [TestMethod]
+    public void FindDuplicateRowsFromExcel_ThrowsExceptionAndLogsError()
+    {
+        // Step 3a: Provide an input file that will cause an exception
+        // when processed and invoke the method
+        var result = excelProcessor.FindDuplicateRowsFromExcel("nonexistent.xlsx");
+
+        // Step 3b: Assert that the method threw an exception and
+        // returned the error message in the result string
+        Assert.IsTrue(result.StartsWith("Failed to get distinct rows from Excel File "));
+        
+        // Step 3c: Assert that the log file was correctly written
+        var logText = File.ReadAllText(FilePath1);
+        Assert.IsTrue(logText.Contains("Failed to get distinct rows from Excel File"));
+    }
+}

@@ -1,0 +1,72 @@
+Set up the testing environment:
+
+Declare and initialize variables for the inputFilePath and delimiter.
+Create an instance of the class that contains the method to be tested.
+Test the GetNumberOfColumns() method:
+
+Provide an input file containing columns separated by the specified delimiter.
+Invoke the GetNumberOfColumns() method with the input file path and delimiter character as arguments.
+Assert that the returned value is equal to the expected number of columns in the file.
+Test the GetNumberOfColumns() method with an input file that does not contain any data:
+
+Provide an input file that does not contain any data.
+Invoke the GetNumberOfColumns() method with the input file path and delimiter character as arguments.
+Assert that the returned value is 0.
+Test the exception handling of the GetNumberOfColumns() method:
+
+Provide an invalid input file path.
+Invoke the GetNumberOfColumns() method with the input file path and delimiter character as arguments.
+Assert that an error message was written to the console.
+
+[TestClass]
+public class ExcelProcessorTests
+{
+    // Step 1: Set up the testing environment
+    private string inputFilePath = "input.csv";
+    private char delimiter = ',';
+    private ExcelProcessor excelProcessor;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        excelProcessor = new ExcelProcessor();
+    }
+
+    [TestMethod]
+    public void GetNumberOfColumns_ReturnsCorrectCountForFile()
+    {
+        // Step 2: Provide an input file and invoke the method
+        var result = excelProcessor.GetNumberOfColumns(inputFilePath, delimiter);
+
+        // Assert that the method returned the correct number of columns
+        Assert.AreEqual(3, result);
+    }
+
+    [TestMethod]
+    public void GetNumberOfColumns_ReturnsZeroForEmptyFile()
+    {
+        // Step 3: Provide an empty input file and invoke the method
+        var result = excelProcessor.GetNumberOfColumns("input_empty.csv", delimiter);
+
+        // Assert that the method returned 0
+        Assert.AreEqual(0, result);
+    }
+
+    [TestMethod]
+    public void GetNumberOfColumns_ThrowsExceptionForInvalidFile()
+    {
+        // Step 4: Provide an invalid input file path and invoke the method
+        try
+        {
+            var result = excelProcessor.GetNumberOfColumns("nonexistent.csv", delimiter);
+        }
+        catch (Exception ex)
+        {
+            // Assert that an error message was thrown
+            StringAssert.Contains(ex.Message, "Error opening file nonexistent.csv:");
+            return;
+        }
+
+        Assert.Fail("Expected exception was not thrown.");
+    }
+}
