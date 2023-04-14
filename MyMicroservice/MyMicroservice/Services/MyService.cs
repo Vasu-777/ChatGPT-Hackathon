@@ -11,29 +11,53 @@ using System.Globalization;
 using System.Data.OleDb;
 using System.IO;
 using System.Collections.Generic;
-using Microsoft.SharePointOnline.CSOM;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+//using Microsoft.SharePointOnline.CSOM;
+//using Microsoft.IdentityModel.Clients.ActiveDirectory;
+// using System.Net.Http;
+// using System.Threading.Tasks;
+
+using Microsoft.SharePoint.ClientSideComponent;
 
 
 namespace MyMicroservice
 {
     public class MyService : IMyService
     {
-        public void connectToSharePoint()
+        public async Task<string> connectToSharePoint()
         {
-            string siteUrl = "https://your-sharepoint-site-url";
-            string username = "your-username";
-            string password = "your-password";
+            var httpClient = new HttpClient();
+            
+            string siteURL = "https://incedoin-my.sharepoint.com/:x:/g/personal/balaji_ramamurthy_incedoinc_com/Ebz3C7yqxkJNtvvD5qrlaaUBNkAt1n55q2VEzYtiL8Tgcg?e=4%3A30ZQkj&at=9"; //"https://incedoin-my.sharepoint.com/:x:/g/personal/shambhavi_gupta_incedoinc_com/ET2dw0glIvBEuP3JoM2cswkBeBM1Ah7YIJnf1rE5jqattw?e=aea40b"; // "https://
+            //string siteURL = "https://www.google.com/search?q=what+is+integrated+terminal+in+visual+studio+code&rlz=1C1GCEU_enIN953IN953&oq=&aqs=chrome.0.35i39i362l8.206500294j0j15&sourceid=chrome&ie=UTF-8";
+            //var response =  httpClient.GetAsync(siteURL);
+var response = await httpClient.GetAsync(siteURL);
+await Task.Delay(100000);
 
-            var securePassword = new SecureString();
-            foreach (char c in password)
+// Task<int> task = Task.Run(() => {
+//             // Simulate a long-running operation
+//             Task.Delay(1000).Wait();
+//             return 42;
+//         });
+
+//         await task.ContinueWith(t => {
+//             Console.WriteLine($"Task completed with result {t.Result}");
+//         });
+
+             if (response.IsSuccessStatusCode)
+            //f(response.IsCompletedSuccessfully)
             {
-                securePassword.AppendChar(c);
+                var content = await response.Content.ReadAsStringAsync();
+                //var content = response.Result; // response.Content.ReadAsStringAsync();
+                // Do something with the content
+                return  string.Join("", content);
+            }
+            else
+            {
+                // Handle the error
+                return $"Error {response.Content} {response.StatusCode}";
             }
 
-            var credentials = new SharePointOnlineCredentials(username, securePassword);
-            var context = new ClientContext(siteUrl);
-            context.Credentials = credentials;
+            
         }
         public string GetMessage()
         {

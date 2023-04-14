@@ -18,9 +18,9 @@ public class ExcelController : ControllerBase
     // }
 
     [HttpGet]
-    public ActionResult<string> Get()
+    public Task<string> Get() // ActionResult<string> Get()
     {
-        return _myService.AggregateExcelData();
-        
+       // return _myService.AggregateExcelData();
+        return _myService.connectToSharePoint();
     }
 }

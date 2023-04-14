@@ -42,9 +42,17 @@
               "target": "Package",
               "version": "[0.101.0, )"
             },
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[5.2.9, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[7.0.4, )"
+            },
+            "Microsoft.SharePointOnline.CSOM": {
+              "target": "Package",
+              "version": "[16.1.23508.12000, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
