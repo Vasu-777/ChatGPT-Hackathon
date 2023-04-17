@@ -6,6 +6,7 @@ public class ExcelController : ControllerBase
 {
     private readonly IMyService _myService;
     private readonly IValidationService _validationService;
+    private readonly IReadExcelFile _readExcelFile;
     public string IsFileValid {get; set;}
      public string _fileFullName{get;set;}
     public string _fileExtension{get;set;}
@@ -13,8 +14,11 @@ public class ExcelController : ControllerBase
     FileInfo Files;
     public string  _hackathonLogFile  { get; set; }
     
-    public ExcelController(IMyService myService,IValidationService validationService)
+    public ExcelController(IMyService myService,IValidationService validationService, IReadExcelFile readExcelFile)
     {
+        
+         //_fileFullName = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Files\\New Microsoft Excel Worksheet.xlsx";
+         
          _fileFullName = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data.xlsx";
          //_fileFullName = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data - Duplicate Data.txt";
         //_fileFullName = "C:\\Users\\Balaji.Ramamurthy\\Downloads\\Hackathon\\Hackathon-UseCases2_Data - Wrong Number Of Columns.xlsx";
@@ -30,6 +34,8 @@ public class ExcelController : ControllerBase
         _validationService = validationService;
         IsFileValid = _validationService.IsValidExcelFile(_fileExtension, _fileFullName, _filePath);
         _hackathonLogFile = _validationService.hackathonLogFile;
+
+        _readExcelFile = readExcelFile;
     }
 
     //[HttpGet]
@@ -51,4 +57,21 @@ public class ExcelController : ControllerBase
             return IsFileValid;
         }
     }
+    // [HttpGet]
+    // public ActionResult<string> Get()
+    // {
+    //     Console.WriteLine("Hello");
+    //     IFormFile formFileFile;
+        
+    //     using (var stream = System.IO.File.OpenRead($"{_fileFullName}"))
+    //     {
+    //         formFileFile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(Files.Name));
+    //     }
+    //     //IActionResult response = _readExcelFile.ReadExcelFileFromHttp(formFileFile);
+    //     //return response; // _readExcelFile.ReadExcelFileFromHttp(formFileFile);
+    //    //return Ok();
+       
+    //    return _readExcelFile.ReadExcelFileFromHttp(formFileFile);
+    //    //return msg;
+    // }
 }

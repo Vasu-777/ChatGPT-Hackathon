@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj": {}
+    "c:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj": {
+    "c:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj",
+        "projectUniqueName": "c:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj",
         "projectName": "MyMicroservice",
-        "projectPath": "C:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj",
+        "projectPath": "c:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\MyMicroservice.csproj",
         "packagesPath": "C:\\Users\\Balaji.Ramamurthy\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\obj\\",
+        "outputPath": "c:\\Users\\Balaji.Ramamurthy\\Downloads\\MyMicroservice\\MyMicroservice\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Balaji.Ramamurthy\\AppData\\Roaming\\NuGet\\NuGet.Config"

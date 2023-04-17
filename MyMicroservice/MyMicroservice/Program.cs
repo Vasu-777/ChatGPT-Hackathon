@@ -7,6 +7,7 @@ builder.Services.AddControllers();
 
     builder.Services.AddSingleton<IMyService, MyService>();
     builder.Services.AddSingleton<IValidationService, ValidationService>();
+    builder.Services.AddSingleton<IReadExcelFile, ReadExcelFile>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
